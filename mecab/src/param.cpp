@@ -189,21 +189,36 @@ void Param::clear() {
   rest_.clear();
 }
 
+
+//ammended to allow for percent escaped paths to be passed into the function
 bool Param::open(const char *arg, const Option *opts) {
-  scoped_fixed_array<char, BUF_SIZE> str;
-  std::strncpy(str.get(), arg, str.size());
+  char str[BUF_SIZE];
+  std::strncpy(str, arg, sizeof(str));
   char* ptr[64];
   unsigned int size = 1;
   ptr[0] = const_cast<char*>(PACKAGE);
 
-  for (char *p = str.get(); *p;) {
+  for (char *p = str; *p;) {
     while (isspace(*p)) *p++ = '\0';
     if (*p == '\0') break;
     ptr[size++] = p;
     if (size == sizeof(ptr)) break;
     while (*p && !isspace(*p)) p++;
   }
-
+    
+//MB additions to allow spaces in folder if percent escaped
+    
+    char *string=ptr[2];
+    if (string!=NULL) {
+        std::string str(string);
+        size_t f=str.find("%20");
+        if (f!=std::string::npos) {
+            str.replace(f, std::string("%20").length(), " ");
+            char *file= new char[str.size()+1];
+              sprintf(file, "%s",str.c_str());
+            ptr[2]=file;
+        }
+    }
   return open(size, ptr, opts);
 }
 

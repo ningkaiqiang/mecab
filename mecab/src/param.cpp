@@ -212,12 +212,16 @@ bool Param::open(const char *arg, const Option *opts) {
     if (string!=NULL) {
         std::string str(string);
         size_t f=str.find("%20");
-        if (f!=std::string::npos) {
+        
+        while (f != std::string::npos) {
             str.replace(f, std::string("%20").length(), " ");
-            char *file= new char[str.size()+1];
-              sprintf(file, "%s",str.c_str());
-            ptr[2]=file;
+            f=str.find("%20");
         }
+        
+        char *file= new char[str.size()+1];
+        sprintf(file, "%s",str.c_str());
+        ptr[2]=file;
+        
     }
   return open(size, ptr, opts);
 }

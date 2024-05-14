@@ -393,7 +393,7 @@ double EncoderLearnerTagger::gradient(double *expected) {
     }
   }
 
-  for (int pos = static_cast<long>(len_); pos >=0;    --pos) {
+  for (long pos = static_cast<long>(len_); pos >=0;    --pos) {
     for (LearnerNode *node = end_node_list_[pos]; node; node = node->enext) {
       calc_beta(node);
     }
